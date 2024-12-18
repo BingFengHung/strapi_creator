@@ -1,0 +1,32 @@
+name: Update Dependencies Manually
+
+on:
+  workflow_dispatch: # 允許手動觸發工作流程
+
+jobs:
+  update-dependencies:
+
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '20' # 此處可根據需求變更 Node.js 版本
+
+    - name: Install dependencies
+      run: |
+        npm install
+
+    - name: Commit and push updated dependencies
+      run: |
+        git config --local user.name "github-actions[bot]"
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git add node_modules
+        git commit -m "Update node_modules" || echo "No changes to commit"
+        git push
+      env:
+        GITHUB_TOKEN: ${{ secrets.ACTION_TOKEN }}
